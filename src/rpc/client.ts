@@ -3,6 +3,7 @@ import * as config from '../../config/config.json';
 import { diff } from '../vlc/diff';
 import { format } from './format';
 import { log } from '../helpers/lager';
+import { verboseLog } from "../index";
 
 export let ClientExecute = () => {
     const client = new RPC.Client({ transport: 'ipc' });
@@ -10,10 +11,10 @@ export let ClientExecute = () => {
     let timeInactive = 0;
 
     function update() {
-        diff((status: any, difference: any) => {
+        diff(async (status: any, difference: any) => {
             if (difference) {
-                client.setActivity(format(status));
-                console.log("Presence updated")
+                await client.setActivity(await format(status));
+                verboseLog("Presence updated")
                 if (!awake) {
                     awake = true;
                     timeInactive = 0;
@@ -24,10 +25,10 @@ export let ClientExecute = () => {
                     if ((timeInactive >= config.rpc.sleepTime) || (!config.rpc.showStopped && status.state === 'stopped')) {
                         log('VLC not playing; going to sleep.', true);
                         awake = false;
-                        client.clearActivity();
+                        await client.clearActivity();
                     } else {
                         console.log("Presence updated")
-                        client.setActivity(format(status));
+                        await client.setActivity(await format(status));
                         awake = false;
                     }
                 }
@@ -36,11 +37,10 @@ export let ClientExecute = () => {
     }
 
     client.on('ready', () => {
-        console.log(`Logged in as ${client.user?.username}`);
+        console.log(`Connected to Discord 🎶`);
     });
 
     function DiscordLogin() {
-        console.log('Connecting to Discord...');
         client.login({ clientId: config.rpc.id })
             .then(() => {
                 setInterval(update, config.rpc.updateInterval);

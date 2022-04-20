@@ -2,10 +2,13 @@ import * as config from '../config/config.json';
 import { log } from './helpers/lager';
 import { spawn } from 'child_process';
 import fs from 'fs';
-
 import { ClientExecute } from './rpc/client';
 ClientExecute()
 
+export function verboseLog(data: string){
+	if(!config.verbose) return;
+	console.log(data)
+}
 const platformDefaults: any = {
 	win32: 'C:/Program Files/VideoLAN/VLC/vlc.exe',
 	winalt: 'C:/Program Files (x86)/VideoLAN/VLC/vlc.exe',
