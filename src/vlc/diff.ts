@@ -1,6 +1,6 @@
+import * as config from '../../config/config.json';
 import { VLCClient as _VLCClient } from 'vlc.js';
 import { log } from '../helpers/lager';
-import * as config from '../../config/config.json';
 
 let detectVLC: Boolean = true;
 

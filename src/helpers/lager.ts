@@ -1,8 +1,8 @@
 import { VLCClient as _VLCClient } from 'vlc.js';
 import { vlc } from '../../config/config.json';
+import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import path from 'path';
 
 const client = new _VLCClient(vlc);
 const destination = path.join(__dirname, '/../../logs/');

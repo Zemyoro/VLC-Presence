@@ -1,7 +1,7 @@
-import { log } from '../helpers/lager';
 import * as config from '../../config/config.json';
 import { Spotify } from '../helpers/spotify';
 import { getLinks } from 'songlink-api';
+import { log } from '../helpers/lager';
 import { verboseLog } from "../index";
 
 export let spotify = new Spotify(config.spotify)
@@ -87,9 +87,16 @@ export let format = async (status: any) => {
                     }
                     output.buttons = [btn1, btn2]
                 }
+
                 if (song.album.images && song.album.images.length > 0) {
                     output.largeImageKey = song.album.images[0].url
                 }
+            } else {
+                let btn1 = {
+                    label: 'Checkout project',
+                    url: 'https://github.com/Zemyoro/VLC-Presence'
+                }
+                output.buttons = [btn1]
             }
         }
         catch (e) { verboseLog('Failed to get spotify Data'); }

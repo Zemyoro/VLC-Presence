@@ -1,20 +1,24 @@
 import * as config from '../config/config.json';
+import killVLC from "./helpers/killVLC";
 import { log } from './helpers/lager';
 import { spawn } from 'child_process';
+import { Client } from './rpc/client';
 import fs from 'fs';
-import { ClientExecute } from './rpc/client';
-ClientExecute()
 
-export function verboseLog(data: string){
-	if(!config.verbose) return;
-	console.log(data)
-}
+killVLC(); // Kills active VLC Processes to prevent error
+Client(); // Runs the RPC Client
+
 const platformDefaults: any = {
 	win32: 'C:/Program Files/VideoLAN/VLC/vlc.exe',
 	winalt: 'C:/Program Files (x86)/VideoLAN/VLC/vlc.exe',
 	linux: '/usr/bin/vlc',
 	unix: '/usr/bin/vlc',
 	darwin: '/Applications/VLC.app/Contents/MacOS/VLC'
+}
+
+export function verboseLog(data: string){
+	if(!config.verbose) return;
+	console.log(data)
 }
 
 function pass() { return Math.random().toString(36).slice(-8) }

@@ -1,11 +1,11 @@
-import RPC from 'discord-rpc';
 import * as config from '../../config/config.json';
-import { diff } from '../vlc/diff';
-import { format } from './format';
 import { log } from '../helpers/lager';
 import { verboseLog } from "../index";
+import { diff } from '../vlc/diff';
+import { format } from './format';
+import RPC from 'discord-rpc';
 
-export let ClientExecute = () => {
+export let Client = () => {
     const client = new RPC.Client({ transport: 'ipc' });
     let awake: Boolean = true;
     let timeInactive = 0;
