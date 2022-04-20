@@ -16,8 +16,8 @@ const platformDefaults: any = {
 	darwin: '/Applications/VLC.app/Contents/MacOS/VLC'
 }
 
-export function verboseLog(data: string){
-	if(!config.verbose) return;
+export function verboseLog(data: string) {
+	if (!config.verbose) return;
 	console.log(data)
 }
 

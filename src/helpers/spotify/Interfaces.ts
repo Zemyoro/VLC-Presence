@@ -89,4 +89,4 @@ export interface Response {
     }
 }
 
-export function Callback(err: any, response: Response | null){}
+export function Callback(err: any, response: Response | null) { }

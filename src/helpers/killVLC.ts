@@ -1,6 +1,6 @@
 import { psTree } from "@flemist/ps-cross-platform";
 
-export default function killVLC(){
+export default function killVLC() {
     psTree().then((processes: any) => {
         for (const [key, value] of Object.entries(processes)) {
             // @ts-ignore

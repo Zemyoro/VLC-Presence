@@ -4,6 +4,7 @@ const SEARCH_URI = "https://api.spotify.com/v1/search?type=";
 
 import { Credentials, Search, Token, Callback, Response } from './Interfaces';
 
+
 export class Spotify {
     private token!: Token
     private credentials: Credentials
@@ -16,7 +17,7 @@ export class Spotify {
     }
 
     search(search: Search, callback?: typeof Callback) {
-        let request
+        let request;
         const opts: any = {
             method: 'GET',
             uri:
@@ -50,7 +51,8 @@ export class Spotify {
                 .then((response: Response) => callback(null, response))
                 .catch((err: any, response: Response) => callback(err, null));
         } else {
-            return request;
+            let req: Response | null = request;
+            return req;
         }
     }
 

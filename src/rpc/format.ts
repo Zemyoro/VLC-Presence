@@ -4,7 +4,8 @@ import { getLinks } from 'songlink-api';
 import { log } from '../helpers/lager';
 import { verboseLog } from "../index";
 
-export let spotify = new Spotify(config.spotify)
+let spotify: Spotify | null = null;
+if (config.spotify.enabled) spotify = new Spotify(config.spotify);
 
 export let format = async (status: any) => {
     if (status.state === 'stopped')
@@ -68,9 +69,9 @@ export let format = async (status: any) => {
     }
     log('Format output', output);
 
-    if (meta.title && meta.artist && config.spotify.enabled) {
+    if (meta.title && meta.artist && spotify) {
         try {
-            let songData = await spotify.search({ type: 'track', query: `${meta.title} - ${meta.artist}` })
+            let songData = await spotify.search({ type: 'track', query: `${meta.title} - ${meta.artist}` });
             if (songData?.tracks.items[0]) {
                 let song = songData.tracks.items[0]
                 let songLink
@@ -96,7 +97,3 @@ export let format = async (status: any) => {
 
     return output;
 }
-
-
-
-
