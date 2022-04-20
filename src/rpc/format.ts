@@ -31,7 +31,10 @@ export let format = async (status: any) => {
         smallImageText: `By M1nx + Zemyoro`,
         startTimestamp: 1,
         endTimestamp: 1,
-        buttons: <Array<any>> []
+        buttons: [{
+            label: 'Checkout project',
+            url: 'https://github.com/Zemyoro/VLC-Presence'
+        }]
     };
 
     if (config.alternateAlbumDisplay) {
@@ -77,26 +80,15 @@ export let format = async (status: any) => {
                 catch (e) { verboseLog('Failed to get song.link Data'); }
 
                 if (songLink?.pageUrl) {
-                    let btn1 = {
+                    output.buttons.unshift({
                         label: `View on Songlink`,
                         url: songLink.pageUrl
-                    }
-                    let btn2 = {
-                        label: 'Checkout project',
-                        url: 'https://github.com/Zemyoro/VLC-Presence'
-                    }
-                    output.buttons = [btn1, btn2]
+                    });
                 }
 
                 if (song.album.images && song.album.images.length > 0) {
                     output.largeImageKey = song.album.images[0].url
                 }
-            } else {
-                let btn1 = {
-                    label: 'Checkout project',
-                    url: 'https://github.com/Zemyoro/VLC-Presence'
-                }
-                output.buttons = [btn1]
             }
         }
         catch (e) { verboseLog('Failed to get spotify Data'); }
