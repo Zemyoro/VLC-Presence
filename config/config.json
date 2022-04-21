@@ -16,10 +16,10 @@
         "address": "localhost"
     },
     "spotify": {
-        "id": "",
-        "secret": "",
+        "id": "8963929a8ce84caeac8082a303c9e1bd",
+        "secret": "0b82ad8ebd4a4292b68aff74c18dee9d",
         "enabled": true
     },
     "verbose": false,
-    "alternateAlbumDisplay": false
+    "alternateAlbumDisplay": true
 }

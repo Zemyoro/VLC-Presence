@@ -2,7 +2,23 @@ const req = require('request-promise');
 const TOKEN_URI = "https://accounts.spotify.com/api/token";
 const SEARCH_URI = "https://api.spotify.com/v1/search?type=";
 
-import { Credentials, Search, Token, Callback, Response } from './Interfaces';
+import {
+    TrackSearch,
+    AlbumSearch,
+    ArtistSearch
+} from './Search';
+
+import {
+    Album,
+    Track,
+    Artist
+} from './Individual';
+
+import {
+    Credentials,
+    Search,
+    Token
+} from './Data';
 
 
 export class Spotify {
@@ -16,7 +32,13 @@ export class Spotify {
         this.token;
     }
 
-    search(search: Search, callback?: typeof Callback) {
+    /**
+     * 
+     * @param search - Type, query, and limit
+     * @param callback - Optional function for results
+     * @returns - Results for search type. If (variable.contentType === "TrackSearch") {}, if (variable.contentType === "AlbumSearch") {}, etc.
+     */
+    async search(search: Search, callback?: any) {
         let request;
         const opts: any = {
             method: 'GET',
@@ -48,20 +70,30 @@ export class Spotify {
 
         if (callback) {
             request
-                .then((response: Response) => callback(null, response))
-                .catch((err: any, response: Response) => callback(err, null));
+                .then((response: TrackSearch | AlbumSearch | ArtistSearch) => callback(null, response))
+                .catch((err: any) => callback(err, null));
         } else {
-            let req: Response | null = request;
+            let req: TrackSearch | AlbumSearch | ArtistSearch = await request;
+            // @ts-ignore
+            req.contentType = (Object.keys(req))[0];
             return req;
         }
     }
 
-    request(query: any, callback?: any) {
-        if (!query || typeof query !== "string") {
-            throw new Error(
-                "You must pass in a Spotify API endpoint to use this method."
-            );
+    async request(query: string, callback?: any) {
+        if (!query) {
+            return console.log('You must pass in a Spotify API endpoint to use this method.');
         }
+
+        query = query.replace('https://open', 'https://api')
+            .replace('/track', '/v1/tracks')
+            .replace('/playlist', '/v1/playlists')
+            .replace('/album', '/v1/albums')
+
+        if (!query.includes('spotify.com')) {
+            return console.log('You must provide a Spotify song link.');
+        }
+
         let request;
         const opts: any = { method: "GET", uri: query, json: true };
 
@@ -83,10 +115,11 @@ export class Spotify {
 
         if (callback) {
             request
-                .then((response: Response) => callback(null, response))
+                .then((response: Track | Album | Artist) => callback(null, response))
                 .catch((err: any) => callback(err, null));
         } else {
-            return request;
+            let req: Track | Album | Artist = request;
+            return req;
         }
     }
 
@@ -117,9 +150,7 @@ export class Spotify {
 
     private getTokenHeader() {
         if (!this.token || !this.token.access_token) {
-            throw new Error(
-                "An error has occurred. Make sure you're using a valid client id and secret.'"
-            );
+            return console.log('An error has occurred. Make sure you\'re using a valid client id and secret.');
         }
         return { Authorization: "Bearer " + this.token.access_token };
     }

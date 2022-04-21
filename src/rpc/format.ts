@@ -70,25 +70,30 @@ export let format = async (status: any) => {
     log('Format output', output);
 
     if (meta.title && meta.artist && spotify) {
+
         try {
-            let songData = await spotify.search({ type: 'track', query: `${meta.title} - ${meta.artist}` });
-            if (songData?.tracks.items[0]) {
-                let song = songData.tracks.items[0]
-                let songLink
-                try {
-                    songLink = await getLinks({ url: song.external_urls.spotify })
-                }
-                catch (e) { verboseLog('Failed to get song.link Data'); }
-
-                if (songLink?.pageUrl) {
-                    output.buttons.unshift({
-                        label: `View on Songlink`,
-                        url: songLink.pageUrl
-                    });
-                }
-
-                if (song.album.images && song.album.images.length > 0) {
-                    output.largeImageKey = song.album.images[0].url
+            let songData = await spotify.search({ type: 'track', query: `${meta.title} ${meta.artist.replace(' ft. ', ' ')}` });
+            if (!songData) return;
+            
+            if (songData.contentType === 'tracks') {
+                if (songData.tracks.items[0]) {
+                    let song = songData.tracks.items[0]
+                    let songLink
+                    try {
+                        songLink = await getLinks({ url: song.external_urls.spotify })
+                    }
+                    catch (e) { verboseLog('Failed to get song.link Data'); }
+    
+                    if (songLink?.pageUrl) {
+                        output.buttons.unshift({
+                            label: `View on Songlink`,
+                            url: songLink.pageUrl
+                        });
+                    }
+    
+                    if (song.album.images && song.album.images.length > 0) {
+                        output.largeImageKey = song.album.images[0].url
+                    }
                 }
             }
         }
