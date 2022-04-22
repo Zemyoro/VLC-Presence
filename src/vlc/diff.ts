@@ -4,7 +4,6 @@ import { log } from '../helpers/lager';
 
 let detectVLC: Boolean = true;
 
-// @ts-ignore
 const VLCClient = new _VLCClient(config.vlc);
 const last: any = {
     filename: '',

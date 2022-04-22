@@ -5,7 +5,6 @@ import { spawn } from 'child_process';
 import { Client } from './rpc/client';
 import fs from 'fs';
 
-killVLC(); // Kills active VLC Processes to prevent error
 Client(); // Runs the RPC Client
 
 const platformDefaults: any = {
@@ -33,19 +32,21 @@ if (!(config.rpc.detached || process.argv.includes('detached'))) {
 		}
 	}
 	const command = config.vlcPath || platformDefaults[process.platform] || 'vlc';
-	// @ts-ignore
-	const child = spawn(command, ['--extraintf', 'http', '--http-host', config.vlc.address, '--http-password', config.vlc.password, '--http-port', config.vlc.port]);
-	// @ts-ignore
-	child.on('exit', () => {
-		console.log("VLC closed; Exiting.");
-		process.exit(0);
-	});
-	// @ts-ignore
-	child.on('error', () => {
-		console.log("------------------------------------");
-		console.log("ERROR: A problem occurred while launching VLC. If you installed VLC to a custom location, add the vlcPath in ./config/config.json (eg. vlcPath: \"C:/Program Files/videolan/vlc/vlc.exe\")");
-		console.log("------------------------------------");
-		console.log("Waiting 20 seconds before exiting to analyze the incoming error message");
-		setTimeout(process.exit, 20000, 1)
-	});
+
+	(async () => {
+		await killVLC();
+
+		const child: any = spawn(command, ['--extraintf', 'http', '--http-host', config.vlc.address, '--http-password', config.vlc.password, '--http-port', `${config.vlc.port}`]);
+		child.on('exit', () => {
+			console.log("VLC closed; Exiting.");
+			process.exit(0);
+		});
+		child.on('error', () => {
+			console.log("------------------------------------");
+			console.log("ERROR: A problem occurred while launching VLC. If you installed VLC to a custom location, add the vlcPath in ./config/config.json (e.g. vlcPath: \"C:/Program Files/videolan/vlc/vlc.exe\")");
+			console.log("------------------------------------");
+			console.log("Waiting 20 seconds before exiting to analyze the incoming error message");
+			setTimeout(process.exit, 20000, 1)
+		});
+	})()
 }

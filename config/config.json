@@ -18,8 +18,8 @@
     "spotify": {
         "id": "",
         "secret": "",
-        "enabled": true
+        "enabled": false
     },
     "verbose": false,
-    "alternateAlbumDisplay": true
+    "alternateAlbumDisplay": false
 }
