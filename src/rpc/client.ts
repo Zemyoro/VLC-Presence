@@ -1,6 +1,6 @@
 import * as config from '../../config/config.json';
 import { log } from '../helpers/lager';
-import { verboseLog } from "../index";
+import error from '../helpers/error';
 import { diff } from '../vlc/diff';
 import { format } from './format';
 import RPC from 'discord-rpc';
@@ -14,7 +14,7 @@ export let Client = () => {
         diff(async (status: any, difference: any) => {
             if (difference) {
                 await client.setActivity(await format(status));
-                verboseLog("Presence updated")
+                error('Presence', "Updated")
                 if (!awake) {
                     awake = true;
                     timeInactive = 0;

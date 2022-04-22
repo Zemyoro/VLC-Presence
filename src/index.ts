@@ -3,6 +3,7 @@ import killVLC from "./helpers/killVLC";
 import { log } from './helpers/lager';
 import { spawn } from 'child_process';
 import { Client } from './rpc/client';
+import error from './helpers/error';
 import fs from 'fs';
 
 Client(); // Runs the RPC Client
@@ -13,11 +14,6 @@ const platformDefaults: any = {
 	linux: '/usr/bin/vlc',
 	unix: '/usr/bin/vlc',
 	darwin: '/Applications/VLC.app/Contents/MacOS/VLC'
-}
-
-export function verboseLog(data: string) {
-	if (!config.verbose) return;
-	console.log(data)
 }
 
 function pass() { return Math.random().toString(36).slice(-8) }
@@ -38,14 +34,12 @@ if (!(config.rpc.detached || process.argv.includes('detached'))) {
 
 		const child: any = spawn(command, ['--extraintf', 'http', '--http-host', config.vlc.address, '--http-password', config.vlc.password, '--http-port', `${config.vlc.port}`]);
 		child.on('exit', () => {
-			console.log("VLC closed; Exiting.");
+			error('VLC', 'Process closed. Exiting...')
 			process.exit(0);
 		});
 		child.on('error', () => {
-			console.log("------------------------------------");
-			console.log("ERROR: A problem occurred while launching VLC. If you installed VLC to a custom location, add the vlcPath in ./config/config.json (e.g. vlcPath: \"C:/Program Files/videolan/vlc/vlc.exe\")");
-			console.log("------------------------------------");
-			console.log("Waiting 20 seconds before exiting to analyze the incoming error message");
+			error('VLC', 'A problem occured while attempting to launch VLC. If VLC is installed to a custom location, add the path to ./config/config.json (e.g. vlcPath: "C:/Program Files/VideoLAN/vlc/vlc.exe"')
+			error('VLC', 'Wait 20 Seconds to analyze the error or exit with ^C (Ctrl + C)')
 			setTimeout(process.exit, 20000, 1)
 		});
 	})()

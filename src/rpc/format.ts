@@ -2,7 +2,7 @@ import * as config from '../../config/config.json';
 import { Spotify } from '../helpers/spotify';
 import { getLinks } from 'songlink-api';
 import { log } from '../helpers/lager';
-import { verboseLog } from "../index";
+import error from '../helpers/error';
 
 let spotify: Spotify | null = null;
 if (config.spotify.enabled) spotify = new Spotify(config.spotify);
@@ -82,7 +82,7 @@ export let format = async (status: any) => {
                     try {
                         songLink = await getLinks({ url: song.external_urls.spotify })
                     }
-                    catch (e) { verboseLog('Failed to get song.link Data'); }
+                    catch (e) { error('Spotify', 'Failed to get song.link Data'); }
 
                     if (songLink?.pageUrl) {
                         output.buttons.unshift({
@@ -97,7 +97,7 @@ export let format = async (status: any) => {
                 }
             }
         }
-        catch (e) { verboseLog('Failed to get spotify Data'); }
+        catch (e) { error('Spotify', 'Failed to get spotify Data'); }
     }
 
     return output;
