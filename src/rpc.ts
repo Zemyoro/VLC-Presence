@@ -2,12 +2,13 @@ import { Category, Meta } from 'vlc.js/lib/src/http/classes/VLCStatus';
 import { SonglinkResponse } from 'songlink-api/lib/types/Response';
 import { Client, Presence } from 'discord-rpc';
 import { spotify, rpc } from '../config.json';
-import { Spotify } from 'ts-spotify-api';
 import { getLinks } from 'songlink-api';
 import { vlc } from '../config.json';
 import { VLCClient } from 'vlc.js';
 
-export let VLC: VLCClient | null = new VLCClient({
+const Spotify = require('node-spotify-api');
+
+export let VLC: VLCClient = new VLCClient({
     address: vlc.address,
     password: vlc.password,
     port: vlc.port
@@ -16,8 +17,8 @@ export let VLC: VLCClient | null = new VLCClient({
 const client = new Client({ transport: 'ipc' });
 
 let lastPresence: Presence = {
-    state: '',
-    details: '',
+    state: 'x\|nothing',
+    details: '*2\|nothing',
     endTimestamp: Date.now(),
 }
 
@@ -27,7 +28,7 @@ client.login({ clientId: rpc.id })
     });
 
 async function update() {
-    const status = await VLC?.getStatus();
+    const status = await VLC.getStatus();
     if (!status) return;
 
     if (status.state === 'stopped')
@@ -67,17 +68,22 @@ async function update() {
     if (lastPresence.details !== newPresence.details
         && lastPresence.endTimestamp !== newPresence.endTimestamp) {
 
-        if (meta.title && meta.artist && spotify.enabled)
-            newPresence = await spotifyInformation(meta, newPresence);
+        if (meta.title && meta.artist && spotify.enabled) {
+            try {
+                newPresence = await spotifyInformation(meta, newPresence);
+            } catch (e) {
+                console.log(e);
+            }
+        }
 
         lastPresence = newPresence;
-        client.setActivity(newPresence);
+        client.setActivity(lastPresence);
     }
 }
 
 async function spotifyInformation(meta: Meta, presence: Presence) {
     const nodeSpotify = new Spotify(spotify);
-    const data = await nodeSpotify.trackSearch({ query: `${meta.title} ${meta.artist?.replace('ft.', '')}` });
+    const data = await nodeSpotify.search({ type: 'track', query: `${meta.title} ${meta.artist?.replace('ft.', '')}` });
     if (!data || !data.tracks.items.length) return presence;
     const song = data.tracks.items[0];
     let link: SonglinkResponse;
