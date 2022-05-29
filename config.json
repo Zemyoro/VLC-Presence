@@ -1,0 +1,25 @@
+{
+    "vlcPath": "",
+    "rpc": {
+        "id": "966390762310868992",
+        "updateInterval": 5000,
+        "sleepTime": 30000,
+        "displayTrackNumber": true,
+        "displayTimeRemaining": true,
+        "showStopped": false,
+        "detached": false,
+        "largeIcon": "vlc"
+    },
+    "vlc": {
+        "password": "",
+        "port": 8080,
+        "address": "localhost"
+    },
+    "spotify": {
+        "id": "",
+        "secret": "",
+        "enabled": false
+    },
+    "verbose": false,
+    "alternateAlbumDisplay": false
+}
