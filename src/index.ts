@@ -18,7 +18,7 @@ const main = {
                 const running = await psTree().then((processes) => {
                     for (const i in Object.values(processes)) {
                         if (Object.values(processes)[i].command.toLowerCase().includes('vlc')) return true;
-                        if (parseInt(i) - 1 === Object.values(processes).length) return false;
+                        if (parseInt(i) + 1 === Object.values(processes).length) return false;
                     }
                 });
 
